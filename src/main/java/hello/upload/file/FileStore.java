@@ -1,6 +1,7 @@
 package hello.upload.file;
 
 import hello.upload.domain.UploadFile;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +14,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class FileStore {
 
     @Value("${file.dir}")
@@ -48,6 +50,7 @@ public class FileStore {
         String originalFilename = multipartFile.getOriginalFilename();
         String storeFileName = createStoreFileName(originalFilename);
         multipartFile.transferTo(new File(getFullPath(storeFileName)));
+
         return new UploadFile(originalFilename, storeFileName);
     }
 
@@ -60,10 +63,11 @@ public class FileStore {
             String originalFilename = multipartFile.getOriginalFilename();
             String storeFileName = createStoreFileName(originalFilename);
             multipartFile.transferTo(new File(getFullPath(storeFileName)));
+
             return new UploadFile(originalFilename, storeFileName);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.info("store-FileV2-exception = ", e);
             return null;
         }
     }
